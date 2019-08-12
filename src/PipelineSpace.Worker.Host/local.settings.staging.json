@@ -1,0 +1,22 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "ServiceBusConnection": "",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "VSTS:AccessId": "gustavo.rabanal.mendoza@gmail.com",
+    "VSTS:AccountId": "cloudystack",
+    "VSTS:AccessSecret": "4kva6xysd7y7aj4eteaudpjhvwd7ucetijmps3immjvl3yusmdgq",
+    "VSTS:ApiVersion": "4.1",
+    "FakeVSTS:AccessId": "cloudystack@gmail.com",
+    "FakeVSTS:AccountId": "cloudystackproject",
+    "FakeVSTS:AccessSecret": "ij5ylwx2uuirknazc6idnhof4qweg5wnxrnjiks4qdd55bzebj5q",
+    "FakeVSTS:ApiVersion": "4.1",
+    "Application:Url": "https://pswebsitestaging.azurewebsites.net/",
+    "Application:ClientId": "CF4A9ED4-4148-438A-9991-9FF285D8B48D",
+    "Application:ClientSecret": "D7E0A941-EA02-4AD1-87B9-6B802F64D6A9",
+    "Application:Scope": "api_pipelinespace",
+    "ApplicationInsights:InstrumentationKey": ""
+  }
+}

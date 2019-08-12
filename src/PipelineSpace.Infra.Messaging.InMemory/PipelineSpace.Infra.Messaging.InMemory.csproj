@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PipelineSpace.Application\PipelineSpace.Application.csproj" />
+    <ProjectReference Include="..\PipelineSpace.Worker.Handlers.Core\PipelineSpace.Worker.Handlers.Core.csproj" />
+  </ItemGroup>
+
+</Project>

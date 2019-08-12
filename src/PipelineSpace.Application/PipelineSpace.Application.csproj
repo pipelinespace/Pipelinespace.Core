@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PipelineSpace.Domain\PipelineSpace.Domain.csproj" />
+    <ProjectReference Include="..\PipelineSpace.Infra.CrossCutting.Extensions\PipelineSpace.Infra.CrossCutting.Extensions.csproj" />
+    <ProjectReference Include="..\PipelineSpace.Infra.Options\PipelineSpace.Infra.Options.csproj" />
+    <ProjectReference Include="..\PipelineSpace.Worker.Events\PipelineSpace.Worker.Events.csproj" />
+  </ItemGroup>
+
+</Project>

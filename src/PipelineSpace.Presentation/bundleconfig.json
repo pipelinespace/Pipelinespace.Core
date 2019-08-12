@@ -1,0 +1,235 @@
+﻿// Configure bundling and minification for the project.
+// More info at https://go.microsoft.com/fwlink/?LinkId=808241
+[
+  {
+    "outputFileName": "wwwroot/css/site.min.css",
+    // An array of relative input file paths. Globbing patterns supported
+    "inputFiles": [
+      "wwwroot/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site.min.js",
+    "inputFiles": [
+      "wwwroot/js/site.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/site.util.min.js",
+    "inputFiles": [
+      "wwwroot/js/site.util.form.validator.js",
+      "wwwroot/js/site.util.http.proxy.js",
+      "wwwroot/js/site.util.manager.js",
+      "wwwroot/js/site.util.notifier.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/organization/organization.create.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/organization/organization.create.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/organization/organization.index.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/organization/organization.index.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/organization/organization.editsetting.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/organization/organization.editsetting.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/organization/organization.editproject.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/organization/organization.editproject.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/organization/organization.edituser.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/organization/organization.edituser.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/organization/organization.editservice.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/organization/organization.editservice.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/project/project.create.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/project/project.create.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/project/project.editsetting.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/project/project.editsetting.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/project/project.editservice.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/project/project.editservice.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/project/project.edituser.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/project/project.edituser.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/project/project.editenvironment.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/project/project.editenvironment.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/project/project.editfeature.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/project/project.editfeature.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/project/project.editactivity.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/project/project.editactivity.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/project/project.layout.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/project/project.layout.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/app/user/user.invitation.presenter.min.js",
+    "inputFiles": [
+      "wwwroot/app/user/user.invitation.presenter.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  }
+]

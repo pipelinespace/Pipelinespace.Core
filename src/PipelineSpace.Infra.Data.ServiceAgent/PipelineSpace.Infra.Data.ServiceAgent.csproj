@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.CloudFormation" Version="3.3.100.60" />
+    <PackageReference Include="AWSSDK.CostExplorer" Version="3.3.102.8" />
+    <PackageReference Include="Microsoft.Azure.Management.Billing" Version="2.1.1-preview" />
+    <PackageReference Include="Microsoft.Azure.Management.ResourceManager" Version="2.0.0-preview" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PipelineSpace.Application\PipelineSpace.Application.csproj" />
+    <ProjectReference Include="..\PipelineSpace.Infra.Options\PipelineSpace.Infra.Options.csproj" />
+  </ItemGroup>
+
+</Project>

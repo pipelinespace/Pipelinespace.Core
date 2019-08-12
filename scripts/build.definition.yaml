@@ -1,0 +1,51 @@
+steps:
+
+- script: dotnet restore --configfile nuget/NuGet.Config
+  displayName: Restore Dependencies
+
+- script: dotnet build -c Release
+  displayName: Build Projects
+
+- script: dotnet publish src/PipelineSpace.Presentation -c Release --no-restore -o ../../buildWebArtifact
+  displayName: Package Application
+
+- script: dotnet publish src/PipelineSpace.Worker.Host -c Release --no-restore -o ../../buildWorkerArtifact
+  displayName: Package Worker
+
+- script: dotnet ef migrations script -c PipelineSpaceDbContext --project src/PipelineSpace.Infra.Data.SqlServer/PipelineSpace.Infra.Data.SqlServer.csproj --startup-project src/PipelineSpace.Infra.Data.SqlServer/PipelineSpace.Infra.Data.SqlServer.csproj -i -o scripts/pipelineSpaceDbContextMigrations.sql
+  displayName: Script Migrations PipelineSpaceDbContext
+
+- script: dotnet ef migrations script -c ConfigurationDbContext --project src/PipelineSpace.Infra.Data.SqlServer/PipelineSpace.Infra.Data.SqlServer.csproj --startup-project src/PipelineSpace.Infra.Data.SqlServer/PipelineSpace.Infra.Data.SqlServer.csproj -i -o scripts/configurationDbContextMigrations.sql
+  displayName: Script Migrations ConfigurationDbContext
+
+- script: dotnet ef migrations script -c PersistedGrantDbContext --project src/PipelineSpace.Infra.Data.SqlServer/PipelineSpace.Infra.Data.SqlServer.csproj --startup-project src/PipelineSpace.Infra.Data.SqlServer/PipelineSpace.Infra.Data.SqlServer.csproj -i -o scripts/persistedGrantDbContextMigrations.sql
+  displayName: Script Migrations PersistedGrantDbContext
+
+
+- task: ArchiveFiles@2
+  displayName: Archive BuildWebArtifact
+  inputs:
+    rootFolderOrFile: buildWebArtifact
+    includeRootFolder: false
+    archiveFile: $(Build.ArtifactStagingDirectory)/application.zip
+
+- task: ArchiveFiles@2
+  displayName: Archive BuildWorkerArtifact
+  inputs:
+    rootFolderOrFile: buildWorkerArtifact
+    includeRootFolder: false
+    archiveFile: $(Build.ArtifactStagingDirectory)/worker.zip
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact - Application/Worker  
+  inputs:
+    PathtoPublish: $(Build.ArtifactStagingDirectory)
+    ArtifactName: Executable
+    publishLocation: Container
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact - Scripts  
+  inputs:
+    PathtoPublish: scripts
+    ArtifactName: Scripts
+    publishLocation: Container

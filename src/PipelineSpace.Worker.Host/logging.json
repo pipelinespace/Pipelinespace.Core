@@ -1,0 +1,48 @@
+{
+  "Logging": {
+    "Performance": {
+      "Serilog": {
+        "Using": [ "Serilog.Sinks.RollingFile" ],
+        "WriteTo": [
+          {
+            "Name": "RollingFile",
+            "Args": { "pathFormat": "performance-{Date}.txt" }
+          }
+        ]
+      }
+    },
+    "Usage": {
+      "Serilog": {
+        "Using": [ "Serilog.Sinks.RollingFile" ],
+        "WriteTo": [
+          {
+            "Name": "RollingFile",
+            "Args": { "pathFormat": "usage-{Date}.txt" }
+          }
+        ]
+      }
+    },
+    "Error": {
+      "Serilog": {
+        "Using": [ "Serilog.Sinks.RollingFile" ],
+        "WriteTo": [
+          {
+            "Name": "RollingFile",
+            "Args": { "pathFormat": "error-{Date}.txt" }
+          }
+        ]
+      }
+    },
+    "Diagnostic": {
+      "Serilog": {
+        "Using": [ "Serilog.Sinks.RollingFile" ],
+        "WriteTo": [
+          {
+            "Name": "RollingFile",
+            "Args": { "pathFormat": "diagnostic-{Date}.txt" }
+          }
+        ]
+      }
+    }
+  }
+}

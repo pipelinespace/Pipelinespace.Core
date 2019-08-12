@@ -1,0 +1,890 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "skuName": {
+      "type": "string",
+      "defaultValue": "F1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "skuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "metadata": {
+        "description": "Describes plan's instance count"
+      }
+    },
+    "sqlAdministratorLogin": {
+      "type": "string",
+      "metadata": {
+        "description": "The admin user of the SQL Server"
+      }
+    },
+    "sqlAdministratorLoginPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password of the admin user of the SQL Server"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "staging",
+      "allowedValues": [
+        "staging",
+        "production"
+      ],
+      "metadata": {
+        "description": "work environment."
+      }
+    },
+    "bitbucketClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "Bitbucket ClientId"
+      }
+    },
+    "bitbucketClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "Bitbucket ClientSecret"
+      }
+    },
+    "gitHubClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "GitHub ClientId"
+      }
+    },
+    "gitHubClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "GitHub ClientSecret"
+      }
+    },
+    "visualStudioClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "VisualStudio ClientId"
+      }
+    },
+    "visualStudioClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "VisualStudio ClientSecret"
+      }
+    },
+    "vstsAccessId": {
+      "type": "string",
+      "metadata": {
+        "description": "VSTS AccessId"
+      }
+    },
+    "vstsAccountId": {
+      "type": "string",
+      "metadata": {
+        "description": "VSTS AccountId"
+      }
+    },
+    "vstsAccessSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "VSTS AccessSecret"
+      }
+    },
+    "fakeVSTSAccessId": {
+      "type": "string",
+      "metadata": {
+        "description": "FakeVSTS AccessId"
+      }
+    },
+    "fakeVSTSAccountId": {
+      "type": "string",
+      "metadata": {
+        "description": "fakeVSTS AccountId"
+      }
+    },
+    "fakeVSTSAccessSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "FakeVSTS AccessSecret"
+      }
+    },
+    "applicationUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Application Url"
+      }
+    },
+    "applicationAccessSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "Application AccessSecret"
+      }
+    },
+    "sendGridApiKey": {
+      "type": "string",
+      "metadata": {
+        "description": "sendGridApiKey"
+      }
+    },
+    "sendGridFrom": {
+      "type": "string",
+      "metadata": {
+        "description": "sendGridFrom"
+      }
+    },
+    "akvKeyId": {
+      "type": "string",
+      "metadata": {
+        "description": "akvKeyId"
+      }
+    },
+    "akvSecretId": {
+      "type": "string",
+      "metadata": {
+        "description": "akvSecretId"
+      }
+    },
+    "akvClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "akvClientId"
+      }
+    },
+    "akvClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "akvClientSecret"
+      }
+    },
+    "tenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "tenantId"
+      }
+    },
+    "userId": {
+      "type": "string",
+      "metadata": {
+        "description": "userId"
+      }
+    },
+    "applicationId": {
+      "type": "string",
+      "metadata": {
+        "description": "applicationId"
+      }
+    },
+    "adminClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "adminClientId"
+      }
+    },
+    "adminClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "adminClientSecret"
+      }
+    }
+  },
+  "variables": {
+    "keyVaultName": "[concat('pskeyvaultbs', parameters('environment'))]",
+    "storageName": "[concat('psstorage', parameters('environment'))]",
+    "redisName": "[concat('psredis', parameters('environment'))]",
+    "serviceBusName": "[concat('psservicebus', parameters('environment'))]",
+    "sqlserverName": "[concat('pssqlserver', parameters('environment'))]",
+    "databaseName": "PipelineSpaceDb",
+    "hostingPlanName": "[concat('pshostingplan', parameters('environment'))]",
+    "webSiteName": "[concat('pswebsite', parameters('environment'))]",
+    "consumptionPlanName": "[concat('psconsumptionplan', parameters('environment'))]",
+    "functionName": "[concat('psfunction', parameters('environment'))]",
+    "appInsightsName": "[concat('psappinsight', parameters('environment'))]"
+  },
+  "resources": [
+    {
+      "name": "[variables('keyVaultName')]",
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2016-10-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "Standard"
+        },
+        "tenantId": "[parameters('tenantId')]",
+        "accessPolicies": [
+          {
+            "tenantId": "[parameters('tenantId')]",
+            "objectId": "[parameters('userId')]",
+            "permissions": {
+              "keys": [
+                "Get",
+                "List",
+                "Update",
+                "Create",
+                "Import",
+                "Delete",
+                "Recover",
+                "Backup",
+                "Restore"
+              ],
+              "secrets": [
+                "Get",
+                "List",
+                "Set",
+                "Delete",
+                "Recover",
+                "Backup",
+                "Restore"
+              ],
+              "certificates": [
+                "Get",
+                "List",
+                "Update",
+                "Create",
+                "Import",
+                "Delete",
+                "Recover",
+                "Backup",
+                "Restore",
+                "ManageContacts",
+                "ManageIssuers",
+                "GetIssuers",
+                "ListIssuers",
+                "SetIssuers",
+                "DeleteIssuers"
+              ]
+            }
+          },
+          {
+            "tenantId": "[parameters('tenantId')]",
+            "objectId": "[parameters('applicationId')]",
+            "permissions": {
+              "keys": [
+                "Get",
+                "List",
+                "Update",
+                "Create",
+                "Import",
+                "Delete",
+                "Recover",
+                "Backup",
+                "Restore",
+                "Decrypt",
+                "Encrypt",
+                "UnwrapKey",
+                "WrapKey",
+                "Verify",
+                "Sign",
+                "Purge"
+              ],
+              "secrets": [
+                "Get"
+              ],
+              "certificates": []
+            }
+          }
+        ],
+        "enableSoftDelete": true,
+        "enablePurgeProtection": true
+      }
+    },
+    {
+      "name": "[variables('storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2018-07-01",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "[variables('storageName')]"
+      },
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "properties": {
+        "accessTier": "Hot"
+      },
+      "resources": [
+        {
+          "name": "[concat(variables('storageName'), '/default/', 'dataprotectionkeys')]",
+          "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+          "apiVersion": "2018-07-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "[variables('sqlserverName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "SqlServer"
+      },
+      "apiVersion": "2015-05-01-preview",
+      "properties": {
+        "administratorLogin": "[parameters('sqlAdministratorLogin')]",
+        "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "type": "firewallrules",
+          "apiVersion": "2015-05-01-preview",
+          "dependsOn": [
+            "[variables('sqlserverName')]"
+          ],
+          "location": "[parameters('location')]",
+          "name": "AllowAllWindowsAzureIps",
+          "properties": {
+            "endIpAddress": "0.0.0.0",
+            "startIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[variables('databaseName')]",
+          "type": "databases",
+          "location": "[parameters('location')]",
+          "tags": {
+            "displayName": "Database"
+          },
+          "apiVersion": "2014-04-01",
+          "dependsOn": [
+            "[variables('sqlserverName')]"
+          ],
+          "properties": {
+            "edition": "Basic",
+            "collation": "SQL_Latin1_General_CP1_CI_AS",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "Basic"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[variables('redisName')]",
+      "type": "Microsoft.Cache/Redis",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "enableNonSslPort": "false",
+        "sku": {
+          "capacity": "0",
+          "family": "C",
+          "name": "Basic"
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "type": "Microsoft.ServiceBus/namespaces",
+      "kind": "Messaging",
+      "name": "[variables('serviceBusName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Basic",
+        "tier": "Basic"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectCreatedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectCreatedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectImportedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectImportedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectServiceCreatedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectServiceCreatedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectFeatureCreatedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectFeatureCreatedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectFeatureServiceCreatedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectFeatureServiceCreatedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectFeatureServiceDeletedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectFeatureServiceDeletedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectEnvironmentCreatedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectEnvironmentCreatedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "OrganizationDeletedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "OrganizationDeletedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectDeletedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectDeletedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectEnvironmentDeletedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectEnvironmentDeletedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectFeatureCompletedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectFeatureCompletedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectFeatureDeletedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectFeatureDeletedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectServiceDeletedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectServiceDeletedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "OrganizationUserInvitedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "OrganizationUserInvitedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectUserInvitedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectUserInvitedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectEnvironmentInactivatedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectEnvironmentInactivatedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectEnvironmentActivatedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectEnvironmentActivatedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectServiceBuildQueuedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectServiceBuildQueuedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectFeatureServiceBuildQueuedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectFeatureServiceBuildQueuedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectFeatureEnvironmentCreatedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectFeatureEnvironmentCreatedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "ProjectServiceTemplateCreatedEvent",
+          "type": "Queues",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]"
+          ],
+          "properties": {
+            "path": "ProjectServiceTemplateCreatedEvent",
+            "defaultMessageTimeToLive": "14.00:00:00"
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2016-03-01",
+      "name": "[variables('hostingPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "HostingPlan"
+      },
+      "sku": {
+        "name": "[parameters('skuName')]",
+        "capacity": "[parameters('skuCapacity')]"
+      },
+      "properties": {
+        "name": "[variables('hostingPlanName')]"
+      }
+    },
+    {
+      "apiVersion": "2016-03-01",
+      "name": "[variables('webSiteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('hostingPlanName')]",
+        "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusName'))]",
+        "[resourceId('microsoft.insights/components/', variables('appInsightsName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName')))]": "empty",
+        "displayName": "Website"
+      },
+      "properties": {
+        "name": "[variables('webSiteName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "siteConfig": {
+          "webSocketsEnabled": true
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2016-03-01",
+          "type": "config",
+          "name": "appsettings",
+          "dependsOn": [
+            "[variables('webSiteName')]"
+          ],
+          "properties": {
+            "ASPNETCORE_ENVIRONMENT": "[parameters('environment')]",
+            "ConnectionStrings__DefaultConnection": "[concat('Data Source=tcp:', reference(concat('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', variables('databaseName'), ';User Id=', parameters('sqlAdministratorLogin'), '@', reference(concat('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ';Password=', parameters('sqlAdministratorLoginPassword'), ';')]",
+            "ConnectionStrings__ServiceBusConnection": "[concat('Endpoint=sb://',variables('serviceBusName'),'.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=', listKeys(concat(resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName')), '/AuthorizationRules/RootManageSharedAccessKey'), '2014-09-01').primaryKey)]",
+            "ConnectionStrings__RedisConnection": "[concat(variables('redisName'),'.redis.cache.windows.net:6380,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', variables('redisName')), '2015-08-01').primaryKey)]",
+            "Authentication__Bitbucket__ClientId": "[parameters('bitbucketClientId')]",
+            "Authentication__Bitbucket__ClientSecret": "[parameters('bitbucketClientSecret')]",
+            "Authentication__GitHub__ClientId": "[parameters('gitHubClientId')]",
+            "Authentication__GitHub__ClientSecret": "[parameters('gitHubClientSecret')]",
+            "Authentication__VisualStudio__ClientId": "[parameters('visualStudioClientId')]",
+            "Authentication__VisualStudio__ClientSecret": "[parameters('visualStudioClientSecret')]",
+            "VSTS__AccessId": "[parameters('vstsAccessId')]",
+            "VSTS__AccountId": "[parameters('vstsAccountId')]",
+            "VSTS__AccessSecret": "[parameters('vstsAccessSecret')]",
+            "FakeVSTS__AccessId": "[parameters('fakeVSTSAccessId')]",
+            "FakeVSTS__AccountId": "[parameters('fakeVSTSAccountId')]",
+            "FakeVSTS__AccessSecret": "[parameters('fakeVSTSAccessSecret')]",
+            "Application__ClientSecret": "[parameters('applicationAccessSecret')]",
+            "Notification__SendGrid__ApiKey": "[parameters('sendGridApiKey')]",
+            "Notification__SendGrid__From": "[parameters('sendGridFrom')]",
+            "ApplicationInsights__InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
+            "DataProtection__AzureKeyVault__KeyIdentifier": "[parameters('akvKeyId')]",
+            "DataProtection__AzureKeyVault__SecretIdentifier": "[parameters('akvSecretId')]",
+            "DataProtection__AzureKeyVault__ClientId": "[parameters('akvClientId')]",
+            "DataProtection__AzureKeyVault__ClientSecret": "[parameters('akvClientSecret')]",
+            "AdminClient__ClientId": "[parameters('adminClientId')]",
+            "AdminClient__ClientSecret": "[parameters('adminClientSecret')]",
+            "DataProtection__Storage__AccountName": "[variables('storageName')]",
+            "DataProtection__Storage__KeyName": "key1",
+            "DataProtection__Storage__KeyValue": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1]",
+            "DataProtection__Storage__ContainerAddress": "[concat('https://', variables('storageName'), '.blob.core.windows.net/dataprotectionkeys')]",
+            "DataProtection__Storage__BlobName": "Keys"
+          }
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2015-04-01",
+      "name": "[variables('consumptionPlanName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[variables('consumptionPlanName')]",
+        "computeMode": "Dynamic",
+        "sku": "Dynamic"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('functionName')]",
+      "location": "[resourceGroup().location]",
+      "kind": "functionapp",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('consumptionPlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]",
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]",
+        "[resourceId('microsoft.insights/components/', variables('appInsightsName'))]"
+      ],
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('consumptionPlanName'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "ASPNETCORE_ENVIRONMENT",
+              "value": "[parameters('environment')]"
+            },
+            {
+              "name": "ServiceBusConnection",
+              "value": "[concat('Endpoint=sb://',variables('serviceBusName'),'.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=', listKeys(concat(resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName')), '/AuthorizationRules/RootManageSharedAccessKey'), '2014-09-01').primaryKey)]"
+            },
+            {
+              "name": "AzureWebJobsDashboard",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1, ';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1, ';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1, ';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[toLower(variables('functionName'))]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "2.0.11961-alpha"
+            },
+            {
+              "name": "VSTS:AccessId",
+              "value": "[parameters('vstsAccessId')]"
+            },
+            {
+              "name": "VSTS:AccountId",
+              "value": "[parameters('vstsAccountId')]"
+            },
+            {
+              "name": "VSTS:AccessSecret",
+              "value": "[parameters('vstsAccessSecret')]"
+            },
+            {
+              "name": "VSTS:ApiVersion",
+              "value": "4.1"
+            },
+            {
+              "name": "FakeVSTS:AccessId",
+              "value": "[parameters('fakeVSTSAccessId')]"
+            },
+            {
+              "name": "FakeVSTS:AccountId",
+              "value": "[parameters('fakeVSTSAccountId')]"
+            },
+            {
+              "name": "FakeVSTS:AccessSecret",
+              "value": "[parameters('fakeVSTSAccessSecret')]"
+            },
+            {
+              "name": "FakeVSTS:ApiVersion",
+              "value": "4.1"
+            },
+            {
+              "name": "Application:Url",
+              "value": "[parameters('applicationUrl')]"
+            },
+            {
+              "name": "Application:ClientId",
+              "value": "CF4A9ED4-4148-438A-9991-9FF285D8B48D"
+            },
+            {
+              "name": "Application:ClientSecret",
+              "value": "[parameters('applicationAccessSecret')]"
+            },
+            {
+              "name": "Notification:SendGrid:ApiKey",
+              "value": "[parameters('sendGridApiKey')]"
+            },
+            {
+              "name": "Notification:SendGrid:From",
+              "value": "[parameters('sendGridFrom')]"
+            },
+            {
+              "name": "Application:Scope",
+              "value": "api_pipelinespace"
+            },
+            {
+              "name": "FUNCTION_DIRECTORY",
+              "value": "D:\\home\\site\\wwwroot"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY_SPACE",
+              "value": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[variables('appInsightsName')]",
+      "type": "Microsoft.Insights/components",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('webSiteName'))]": "Resource",
+        "displayName": "AppInsightsComponent"
+      },
+      "properties": {
+        "applicationId": "[variables('appInsightsName')]"
+      }
+    }
+  ]
+}

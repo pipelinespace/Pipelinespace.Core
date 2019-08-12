@@ -1,0 +1,22 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "ServiceBusConnection": "",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "VSTS:AccessId": "############",
+    "VSTS:AccountId": "############",
+    "VSTS:AccessSecret": "############",
+    "VSTS:ApiVersion": "4.1",
+    "FakeVSTS:AccessId": "############",
+    "FakeVSTS:AccountId": "############",
+    "FakeVSTS:AccessSecret": "############",
+    "FakeVSTS:ApiVersion": "4.1",
+    "Application:Url": "https://ws.pipelinespace.com",
+    "Application:ClientId": "CF4A9ED4-4148-438A-9991-9FF285D8B48D",
+    "Application:ClientSecret": "############",
+    "Application:Scope": "api_pipelinespace",
+    "ApplicationInsights:InstrumentationKey": ""
+  }
+}
